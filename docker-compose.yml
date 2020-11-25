@@ -1,0 +1,36 @@
+version: "3"
+
+services:
+  mysql:
+    image: percona:5.7
+    ports:
+      - "127.0.0.1:3307:3306/tcp"
+    volumes:
+      - ./resources/local-dump.sql:/docker-entrypoint-initdb.d/local-dump.sql:ro
+      - mysql:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_USER: test
+      MYSQL_PASSWORD: 1234
+    networks:
+      - tier
+
+  app:
+    image: ipravdyvyi/php-nginx:latest
+    environment:
+      WEB_DOCUMENT_ROOT: /app/public
+    volumes:
+      - './:/app'
+    ports:
+      - '81:80'
+    networks:
+      - tier
+
+networks:
+  tier:
+    external:
+      name: myezjob
+
+volumes:
+  mysql:
+    driver: local
