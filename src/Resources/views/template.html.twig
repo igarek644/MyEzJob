@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+
+<!-- app/Resources/views/template.html.twig -->
+
+<head>
+    <title></title>
+</head>
+<body>
+<div class="sidebar-search">
+    <div class="input-group custom-search-form">
+        <input type="text" id="search" class="form-control">
+    </div>
+    <!-- /input-group -->
+</div>
+<ul class="nav" id="side-menu">
+    <li>
+        <a href="#"> Articles:<span class="fa arrow"></span></a>
+        <ul class="nav nav-second-level" id="entitiesNav">
+        </ul>
+    </li>
+</ul>
+</body>
+</html>
+
+<!-- jQuery is necessary -->
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+<script type="text/javascript">
+    jQuery(document).ready(function() {
+        var searchRequest = null;
+        $("#search").keyup(function() {
+            var minlength = 3;
+            var value = $(this).val();
+            var entitySelector = $("#entitiesNav").html('');
+            if (value.length >= minlength ) {
+                if (searchRequest != null)
+                    searchRequest.abort();
+                searchRequest = $.ajax({
+                    type: "GET",
+                    url: "{{ path('article_get_collection') }}",
+                    data: {
+                        'q' : value
+                    },
+                    dataType: "text",
+                    success: function(msg){
+                        //we need to check if the value is the same
+                            var result = JSON.parse(msg).data;
+                            $.each(result, function(key, arr) {
+                                $.each(arr, function(id, value) {
+                                        entitySelector.append('<li>Title: ' + value.title + ' Id: ' + value.id + '</li>');
+                                });
+                            });
+                        }
+                });
+            }
+        });
+    });
+</script>

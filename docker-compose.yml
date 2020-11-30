@@ -25,7 +25,25 @@ services:
       - '81:80'
     networks:
       - tier
-
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.7.2
+    environment:
+      - cluster.name=ESCluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - xpack.security.enabled=false
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    expose:
+      - 9201
+    ports:
+      - "9201:9200"
+    volumes:
+      - elasticsearch:/usr/share/elasticsearch/data
+    networks:
+      - tier
 networks:
   tier:
     external:
@@ -33,4 +51,6 @@ networks:
 
 volumes:
   mysql:
+    driver: local
+  elasticsearch:
     driver: local

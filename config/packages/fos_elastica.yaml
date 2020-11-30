@@ -1,0 +1,14 @@
+fos_elastica:
+    clients:
+        default: { host: '%env(resolve:ELASTICSEARCH_URL)%', port: 9200 }
+    indexes:
+        app:
+            types:
+                articles:
+                    properties:
+                        title: ~
+                        description: ~
+                        tags: ~
+                    persistence:
+                        driver: orm
+                        model: App\Entity\Article
