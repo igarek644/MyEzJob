@@ -12,6 +12,9 @@ use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Class TagController
@@ -53,17 +56,10 @@ class TagController extends AbstractController
         $tag = $this->tagRepository->findOneBy(['name' => $name]);
     
         if (null === $tag) {
-            throw new Exception(sprintf('Tag with name `%s` not found', $name));
+            throw new NotFoundHttpException(sprintf('Tag with name `%s` not found', $name));
         }
     
-        return new JsonResponse(
-            [
-                'data' => [
-                    'id' => $tag->getId(),
-                    'name' => $tag->getName(),
-                ]
-            ]
-        );
+        return new JsonResponse(['data' => ['id' => $tag->getId(), 'name' => $tag->getName()]]);
     }
     
     /**
@@ -78,25 +74,18 @@ class TagController extends AbstractController
         $tagForm = $this->createForm(TagType::class, $tag);
         $tagForm->submit($request->request->all());
     
-        if (!$tagForm->isValid()) {
-            $errors = $tagForm->getErrors(true);
-        
-            throw new Exception($errors->current()->getMessage());
+        $errors = $tagForm->getErrors(true);
+        if (count($errors) > 0) {
+            throw new BadRequestHttpException($errors->current()->getMessage());
         }
 
         $this->entityManager->persist($tag);
         try {
             $this->entityManager->flush();
         } catch (UniqueConstraintViolationException $exception) {
-            throw new Exception(sprintf('Tag `%s` already exists', $tag->getName()));
+            throw new BadRequestHttpException(sprintf('Tag `%s` already exists', $tag->getName()));
         }
         
-        return new JsonResponse(
-            [
-                'data' => [
-                    'id' => $tag->getId()
-                ]
-            ]
-        );
+        return new JsonResponse(['data' => ['id' => $tag->getId()]], Response::HTTP_CREATED);
     }
 }

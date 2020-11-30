@@ -10,6 +10,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -78,7 +79,7 @@ class ArticleTagController extends AbstractController
         $article->addTag($tag->getName());
         $this->entityManager->flush();
         
-        return new JsonResponse(['data' => ['id' => $article->getId()]]);
+        return new JsonResponse(['data' => ['id' => $article->getId()]], Response::HTTP_CREATED);
     }
     
     /**
@@ -87,7 +88,7 @@ class ArticleTagController extends AbstractController
      *
      * @return JsonResponse
      */
-    public function removeTag(Request $request, int $articleId)
+    public function removeTag(Request $request)
     {
         $article = $this->articleRequestedEntityManager->getRequestedEntity($request);
 
@@ -108,6 +109,6 @@ class ArticleTagController extends AbstractController
         $this->entityManager->persist($article);
         $this->entityManager->flush();
     
-        return new JsonResponse(['data' => ['id' => $article->getId()]]);
+        return new JsonResponse(['data' => ['id' => $article->getId()]], Response::HTTP_NO_CONTENT);
     }
 }

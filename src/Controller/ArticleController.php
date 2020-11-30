@@ -95,12 +95,12 @@ class ArticleController extends AbstractController
         
         $errors = $form->getErrors(true);
         if (count($errors) > 0) {
-            throw new Exception($errors->current()->getMessage());
+            throw new BadRequestHttpException($errors->current()->getMessage());
         }
         
         $this->entityManager->flush();
         
-        return new JsonResponse(['data' => ['id' => $article->getId(),],], Response::HTTP_CREATED);
+        return new JsonResponse(['data' => ['id' => $article->getId(),],], Response::HTTP_NO_CONTENT);
     }
     
     /**
@@ -124,6 +124,6 @@ class ArticleController extends AbstractController
             ];
         }
         
-        return new JsonResponse(['data' => [$response]]);
+        return new JsonResponse(['data' => $response]);
     }
 }

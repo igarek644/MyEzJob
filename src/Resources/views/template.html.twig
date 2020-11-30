@@ -48,7 +48,7 @@
                             var result = JSON.parse(msg).data;
                             $.each(result, function(key, arr) {
                                 $.each(arr, function(id, value) {
-                                        entitySelector.append('<li>Title: ' + value.title + ' Id: ' + value.id + '</li>');
+                                        entitySelector.append('<li>Title: ' + value + ' Id: ' + id + '</li>');
                                 });
                             });
                         }
