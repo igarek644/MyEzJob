@@ -38,7 +38,7 @@ docker exec -it myezjob_app_1 php bin/console doctrine:migrations:migrate
 ```
 Populate elastic:
 ```
-docker exec -it image_name php bin/console fos:elastica:populate
+docker exec -it myezjob_app_1 php bin/console fos:elastica:populate
 ```
 
 
